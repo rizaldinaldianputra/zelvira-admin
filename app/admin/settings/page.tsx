@@ -261,10 +261,10 @@ export default function SettingsDashboard() {
       statusText: hasTiktok ? `${tiktokShops.length} Toko Terhubung` : 'Siap Otorisasi',
       accountName: hasTiktok ? tiktokShops[0].shopName : 'Koneksi Siap Diotorisasi',
       href: '/admin/integrations/tiktok',
-      webhookUrl: 'https://api.zelvira.my.id/api/v1/marketplace/tiktok/webhook',
+      webhookUrl: 'https://api.zelvira.co.id/api/v1/marketplace/tiktok/webhook',
       details: [
         { label: 'Status Toko', value: hasTiktok ? tiktokShops[0].shopName : 'Siap Diotorisasi' },
-        { label: 'Webhook Endpoint', value: 'https://api.zelvira.my.id/api/v1/marketplace/tiktok/webhook' },
+        { label: 'Webhook Endpoint', value: 'https://api.zelvira.co.id/api/v1/marketplace/tiktok/webhook' },
       ],
     },
     {
@@ -281,10 +281,10 @@ export default function SettingsDashboard() {
       statusText: 'Siap Konfigurasi',
       accountName: 'Shopee Indonesia Store',
       href: '/admin/integrations/shopee',
-      webhookUrl: 'https://api.zelvira.my.id/api/v1/marketplace/shopee/webhook',
+      webhookUrl: 'https://api.zelvira.co.id/api/v1/marketplace/shopee/webhook',
       details: [
         { label: 'Platform ID', value: 'Shopee Partner ID' },
-        { label: 'Webhook Endpoint', value: 'https://api.zelvira.my.id/api/v1/marketplace/shopee/webhook' },
+        { label: 'Webhook Endpoint', value: 'https://api.zelvira.co.id/api/v1/marketplace/shopee/webhook' },
       ],
     },
 
@@ -311,7 +311,7 @@ export default function SettingsDashboard() {
         { label: 'Platform ID', value: 'Meta App ID: 1178932708147074' },
         { label: 'Tipe Akun', value: 'Facebook Fanpage / Business Page' },
         { label: 'Halaman Terhubung', value: fbAccount?.accountName || 'Belum Terhubung' },
-        { label: 'Redirect URI', value: 'https://api.zelvira.my.id/api/v1/social/callback/facebook' },
+        { label: 'Redirect URI', value: 'https://api.zelvira.co.id/api/v1/social/callback/facebook' },
       ],
     },
     {
@@ -330,12 +330,12 @@ export default function SettingsDashboard() {
       socialPlatform: 'INSTAGRAM',
       socialAccountId: igAccount?.id,
       href: '/admin/settings?tab=social',
-      webhookUrl: 'https://api.zelvira.my.id/api/v1/callbacks/instagram/webhook',
+      webhookUrl: 'https://api.zelvira.co.id/api/v1/callbacks/instagram/webhook',
       details: [
         { label: 'Platform ID', value: 'Meta App ID: 1178932708147074' },
         { label: 'Tipe Akun', value: 'Instagram Professional / Creator' },
         { label: 'Akun Terhubung', value: igAccount?.accountName || '@zelviraofficialstore' },
-        { label: 'Redirect URI', value: 'https://api.zelvira.my.id/api/v1/social/callback/instagram' },
+        { label: 'Redirect URI', value: 'https://api.zelvira.co.id/api/v1/social/callback/instagram' },
       ],
     },
     {
@@ -354,12 +354,12 @@ export default function SettingsDashboard() {
       socialPlatform: 'THREADS',
       socialAccountId: thAccount?.id,
       href: '/admin/settings?tab=social',
-      webhookUrl: 'https://api.zelvira.my.id/api/v1/social/callback/threads',
+      webhookUrl: 'https://api.zelvira.co.id/api/v1/social/callback/threads',
       details: [
         { label: 'Platform ID', value: 'Threads App ID: 1100121756212184' },
         { label: 'Tipe Akun', value: 'Threads Profile Account' },
         { label: 'Akun Terhubung', value: thAccount?.accountName || '@zelviraofficialstore' },
-        { label: 'Redirect URI', value: 'https://api.zelvira.my.id/api/v1/social/callback/threads' },
+        { label: 'Redirect URI', value: 'https://api.zelvira.co.id/api/v1/social/callback/threads' },
       ],
     },
     {
@@ -381,7 +381,7 @@ export default function SettingsDashboard() {
       details: [
         { label: 'Client Key', value: ttCreatorAccount?.clientKey || 'sbawknsk6eooabz8hq' },
         { label: 'Akun Terhubung', value: ttCreatorAccount?.accountName || '@zelvira' },
-        { label: 'Redirect URI', value: 'https://api.zelvira.my.id/api/v1/social/callback/tiktok' },
+        { label: 'Redirect URI', value: 'https://api.zelvira.co.id/api/v1/social/callback/tiktok' },
       ],
     },
     {
@@ -403,7 +403,7 @@ export default function SettingsDashboard() {
       details: [
         { label: 'Client ID', value: '86bsbluntr0jzu' },
         { label: 'Halaman', value: liAccount?.accountName || 'Zelvira Official' },
-        { label: 'Redirect URI', value: 'https://api.zelvira.my.id/api/v1/social/callback/linkedin' },
+        { label: 'Redirect URI', value: 'https://api.zelvira.co.id/api/v1/social/callback/linkedin' },
       ],
     },
     {
@@ -424,7 +424,7 @@ export default function SettingsDashboard() {
       href: '/admin/settings?tab=social',
       details: [
         { label: 'Handle Akun', value: xAccount?.accountName || '@zelvira_id' },
-        { label: 'Redirect URI', value: 'https://api.zelvira.my.id/api/v1/social/callback/x' },
+        { label: 'Redirect URI', value: 'https://api.zelvira.co.id/api/v1/social/callback/x' },
       ],
     },
     {
@@ -446,7 +446,7 @@ export default function SettingsDashboard() {
       details: [
         { label: 'Saluran Aktif', value: (ytAccount && ytAccount.isActive && ytAccount.hasToken) ? (ytAccount.accountName || 'Saluran Terhubung') : 'Belum Terhubung' },
         ...(ytAccount?.accountId ? [{ label: 'Channel ID', value: ytAccount.accountId }] : []),
-        { label: 'Redirect URI', value: 'https://api.zelvira.my.id/api/v1/social/callback/youtube' },
+        { label: 'Redirect URI', value: 'https://api.zelvira.co.id/api/v1/social/callback/youtube' },
       ],
     },
 
@@ -486,9 +486,9 @@ export default function SettingsDashboard() {
       statusText: 'Terhubung (H2H Ready)',
       accountName: 'Digiflazz H2H Production',
       href: '/admin/integrations/digiflazz',
-      webhookUrl: 'https://api.zelvira.my.id/api/digiflazz/webhook',
+      webhookUrl: 'https://api.zelvira.co.id/api/digiflazz/webhook',
       details: [
-        { label: 'Webhook Endpoint', value: 'https://api.zelvira.my.id/api/digiflazz/webhook' },
+        { label: 'Webhook Endpoint', value: 'https://api.zelvira.co.id/api/digiflazz/webhook' },
         { label: 'Layanan', value: 'Inquiry Pulsa & Token PLN Real-time' },
       ],
     },
@@ -506,11 +506,11 @@ export default function SettingsDashboard() {
       statusText: 'Aktif Terhubung',
       accountName: 'Zelvira Midtrans Merchant',
       href: '/admin/settings/general',
-      webhookUrl: 'https://api.zelvira.my.id/api/v1/callbacks/midtrans',
+      webhookUrl: 'https://api.zelvira.co.id/api/v1/callbacks/midtrans',
       details: [
         { label: 'Merchant ID', value: 'G404512774' },
         { label: 'Client Key', value: 'Mid-client-DDoZuhWWIzZo_1js' },
-        { label: 'Webhook URL', value: 'https://api.zelvira.my.id/api/v1/callbacks/midtrans' },
+        { label: 'Webhook URL', value: 'https://api.zelvira.co.id/api/v1/callbacks/midtrans' },
       ],
     },
     {

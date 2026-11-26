@@ -3,9 +3,9 @@ import { ApiRequestOptions } from '@/types/api';
 const isProd = process.env.NODE_ENV === 'production';
 const getBaseUrl = () => {
   if (typeof window === 'undefined') {
-    return process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://api.zelvira.my.id/api';
+    return process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://api.zelvira.co.id/api';
   }
-  return process.env.NEXT_PUBLIC_API_URL || 'https://api.zelvira.my.id/api';
+  return process.env.NEXT_PUBLIC_API_URL || 'https://api.zelvira.co.id/api';
 };
 export const getApiBaseUrl = getBaseUrl;
 export const API_BASE_URL = getBaseUrl();

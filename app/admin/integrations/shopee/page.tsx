@@ -199,7 +199,7 @@ export default function ShopeeIntegrationPage() {
             <div className="p-3.5 rounded-2xl bg-orange-50/60 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/30 text-slate-600 dark:text-slate-300">
               <span className="font-bold block text-orange-700 dark:text-orange-400 mb-1">Webhook URL Shopee:</span>
               <p className="font-mono text-[11px] text-slate-500 break-all bg-white dark:bg-slate-900 p-2 rounded-lg border border-orange-200 dark:border-orange-900/50">
-                https://api.zelvira.my.id/api/v1/marketplace/shopee/webhook
+                https://api.zelvira.co.id/api/v1/marketplace/shopee/webhook
               </p>
             </div>
           </div>

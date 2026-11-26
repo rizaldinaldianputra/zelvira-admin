@@ -55,7 +55,7 @@ export function useChatAdmin(roomId: string) {
     const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
     const wsUrl = isLocalhost
       ? 'http://localhost:8081/ws-chat'
-      : (isProd ? 'https://api.zelvira.my.id/ws-chat' : 'http://localhost:8081/ws-chat');
+      : (isProd ? 'https://api.zelvira.co.id/ws-chat' : 'http://localhost:8081/ws-chat');
 
     // 2. Connect WebSocket
     const client = new Client({

@@ -2249,7 +2249,7 @@ export function useSupportRooms() {
 
   const fetchRooms = async () => {
     try {
-      const res = await fetch('https://api.zelvira.my.id/api/v1/chat/rooms');
+      const res = await fetch('https://api.zelvira.co.id/api/v1/chat/rooms');
       const data = await res.json();
       if (data.success) {
         setRooms(data.data);

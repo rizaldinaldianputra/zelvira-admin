@@ -1312,7 +1312,7 @@ export default function SocialPostsPage() {
                               • <strong>Video (MP4/WebM):</strong> Diunggah langsung via chunked <code>FILE_UPLOAD</code> ke TikTok tanpa perlu verifikasi domain URL.
                             </p>
                             <p>
-                              • <strong>Foto / Carousel:</strong> Gambar otomatis dikonversi ke JPEG & dikirim via <code>PULL_FROM_URL</code> (wajib verifikasi domain/prefix <code>https://minio.zelvira.my.id/</code> di Portal TikTok).
+                              • <strong>Foto / Carousel:</strong> Gambar otomatis dikonversi ke JPEG & dikirim via <code>PULL_FROM_URL</code> (wajib verifikasi domain/prefix <code>https://s3.zelvira.co.id/</code> di Portal TikTok).
                             </p>
                           </div>
                         </div>

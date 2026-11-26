@@ -43,8 +43,8 @@ export default function InstagramIntegrationPage() {
   const configId = '1482133923808500';
   const defaultAccountId = '17841415885981301';
   const defaultUsername = 'zelviraofficialstore';
-  const redirectUri = 'https://api.zelvira.my.id/api/v1/callbacks/instagram/oauth';
-  const webhookCallbackUrl = 'https://api.zelvira.my.id/api/v1/callbacks/instagram/webhook';
+  const redirectUri = 'https://api.zelvira.co.id/api/v1/callbacks/instagram/oauth';
+  const webhookCallbackUrl = 'https://api.zelvira.co.id/api/v1/callbacks/instagram/webhook';
   const webhookVerifyToken = 'zelvira_ig_verify_token_2026';
 
   const fetchShops = async () => {

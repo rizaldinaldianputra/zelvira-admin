@@ -9,17 +9,17 @@ export function formatImageUrl(path: string | null | undefined): string {
 
   const isProd = process.env.NODE_ENV === 'production';
   const defaultStorageUrl = isProd
-    ? 'https://minio.zelvira.my.id'
+    ? 'https://s3.zelvira.co.id'
     : 'http://localhost:9000';
   let storageUrl = process.env.NEXT_PUBLIC_STORAGE_URL || defaultStorageUrl;
 
   // Sanitize misconfigured or legacy storage domains in env
   if (storageUrl.includes('storage.zelvira.my.id')) {
-    storageUrl = storageUrl.replace('storage.zelvira.my.id', 'minio.zelvira.my.id');
+    storageUrl = storageUrl.replace('storage.zelvira.my.id', 's3.zelvira.co.id');
   } else if (storageUrl.includes('storage.zelvira.my.id')) {
-    storageUrl = storageUrl.replace('storage.zelvira.my.id', 'minio.zelvira.my.id');
-  } else if (storageUrl.includes('minio.zelvira.my.id')) {
-    storageUrl = storageUrl.replace('minio.zelvira.my.id', 'minio.zelvira.my.id');
+    storageUrl = storageUrl.replace('storage.zelvira.my.id', 's3.zelvira.co.id');
+  } else if (storageUrl.includes('s3.zelvira.co.id')) {
+    storageUrl = storageUrl.replace('s3.zelvira.co.id', 's3.zelvira.co.id');
   }
 
   const cleanStorageUrl = storageUrl.endsWith('/') ? storageUrl.slice(0, -1) : storageUrl;
@@ -34,7 +34,7 @@ export function formatImageUrl(path: string | null | undefined): string {
     'storage.zelvira.my.id:9000',
     'storage.zelvira.my.id',
     'storage.zelvira.my.id',
-    'minio.zelvira.my.id',
+    's3.zelvira.co.id',
     'zelixa-minio:9000',
     'zelvira-minio:9000',
     'minio:9000',
