@@ -349,6 +349,18 @@ const NAV_GROUPS = [
   },
 
   {
+    title: 'AI Management',
+    items: [
+      {
+        name: 'AI Agents',
+        href: '/admin/ai-agents',
+        icon: Shield,
+        menuKey: 'ai_agents',
+      },
+    ],
+  },
+
+  {
     title: 'Analytics & Settings',
     items: [
       {
