@@ -44,12 +44,22 @@ export default function ProductEditPage({ params }: PageProps) {
           : 'Kelola informasi produk, model style, dan stok masing-masing varian'
       }
       onSubmit={form.handleSubmit(onSubmit, (errors) => {
-        const firstError = Object.values(errors)[0] as any;
-        const msg =
-          firstError?.message ||
-          firstError?.[0]?.groupName?.message ||
-          firstError?.[0]?.details?.message ||
-          'Mohon periksa kembali field yang wajib diisi (Nama, Slug, Kategori, Brand, Varian).';
+        const findFirstError = (obj: any, path = ''): { path: string; message: string } | null => {
+          if (!obj || typeof obj !== 'object') return null;
+          if (typeof obj.message === 'string' && obj.message) {
+            return { path, message: obj.message };
+          }
+          for (const key of Object.keys(obj)) {
+            const nextPath = path ? `${path}.${key}` : key;
+            const res = findFirstError(obj[key], nextPath);
+            if (res) return res;
+          }
+          return null;
+        };
+        const err = findFirstError(errors);
+        const msg = err
+          ? `${err.path ? `[${err.path}] ` : ''}${err.message}`
+          : 'Mohon periksa kembali field yang bertanda merah.';
         import('sonner').then(({ toast }) => toast.error(msg));
       })}
       isLoading={isLoading}
