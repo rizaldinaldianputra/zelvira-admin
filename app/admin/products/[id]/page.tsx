@@ -43,7 +43,15 @@ export default function ProductEditPage({ params }: PageProps) {
           ? 'Tambahkan master produk lengkap dengan variasi model, warna, ukuran, dan stok'
           : 'Kelola informasi produk, model style, dan stok masing-masing varian'
       }
-      onSubmit={form.handleSubmit(onSubmit)}
+      onSubmit={form.handleSubmit(onSubmit, (errors) => {
+        const firstError = Object.values(errors)[0] as any;
+        const msg =
+          firstError?.message ||
+          firstError?.[0]?.groupName?.message ||
+          firstError?.[0]?.details?.message ||
+          'Mohon periksa kembali field yang wajib diisi (Nama, Slug, Kategori, Brand, Varian).';
+        import('sonner').then(({ toast }) => toast.error(msg));
+      })}
       isLoading={isLoading}
       maxWidth="max-w-6xl"
     >
