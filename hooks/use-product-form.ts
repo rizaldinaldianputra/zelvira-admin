@@ -13,7 +13,10 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export const variantDetailSchema = z.object({
-  id: z.number().optional(),
+  id: z.preprocess(
+    (v) => (v === '' || v === null || v === undefined || Number.isNaN(Number(v)) ? undefined : Number(v)),
+    z.number().optional()
+  ),
   sku: z.string().optional(),
   size: z.string().optional(),
   color: z.string().optional(),
