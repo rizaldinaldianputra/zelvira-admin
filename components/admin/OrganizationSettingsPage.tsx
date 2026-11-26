@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { OrganizationService } from '@/services/organization.service';
+import { apiClient } from '@/services/api.client';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +31,11 @@ const orgSchema = z.object({
   appstoreUrl: z.string().url('URL tidak valid').optional().nullable().or(z.literal('')),
   latitude: z.number().optional().nullable(),
   longitude: z.number().optional().nullable(),
+  originProvinceId: z.string().optional().nullable(),
+  originCityId: z.string().optional().nullable(),
+  originDistrictId: z.string().optional().nullable(),
+  originSubdistrictId: z.string().optional().nullable(),
+  originLocationName: z.string().optional().nullable(),
   logoUrl: z.string().optional().nullable(),
 });
 
@@ -38,6 +44,10 @@ type OrgFormValues = z.infer<typeof orgSchema>;
 export default function OrganizationSettingsPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [provinces, setProvinces] = useState<any[]>([]);
+  const [cities, setCities] = useState<any[]>([]);
+  const [districts, setDistricts] = useState<any[]>([]);
+  const [subdistricts, setSubdistricts] = useState<any[]>([]);
 
   const form = useForm<OrgFormValues>({
     resolver: zodResolver(orgSchema),
@@ -63,7 +73,20 @@ export default function OrganizationSettingsPage() {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        const data = await OrganizationService.get();
+        const [data, provRes] = await Promise.all([
+          OrganizationService.get(),
+          apiClient.get<any>('/v1/shipping/provinces').catch(() => []),
+        ]);
+        setProvinces(Array.isArray(provRes) ? provRes : []);
+        if (data.originProvinceId) {
+          apiClient.get<any>(`/v1/shipping/cities?provinceId=${data.originProvinceId}`).then((r) => setCities(Array.isArray(r) ? r : [])).catch(() => {});
+        }
+        if (data.originCityId) {
+          apiClient.get<any>(`/v1/shipping/districts?cityId=${data.originCityId}`).then((r) => setDistricts(Array.isArray(r) ? r : [])).catch(() => {});
+        }
+        if (data.originDistrictId) {
+          apiClient.get<any>(`/v1/shipping/subdistricts?districtId=${data.originDistrictId}`).then((r) => setSubdistricts(Array.isArray(r) ? r : [])).catch(() => {});
+        }
         form.reset({
           ...data,
           email: data.email || '',
@@ -151,6 +174,120 @@ export default function OrganizationSettingsPage() {
                 </FormItem>
               )}
             />
+
+            {/* LOKASI ASAL PENGIRIMAN (ORIGIN) */}
+            <div className="space-y-3 pt-2">
+              <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">
+                Lokasi Asal Pengiriman (Origin Ongkir)
+              </FormLabel>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <select
+                  value={form.watch('originProvinceId') || ''}
+                  onChange={async (e) => {
+                    const val = e.target.value;
+                    form.setValue('originProvinceId', val);
+                    form.setValue('originCityId', '');
+                    form.setValue('originDistrictId', '');
+                    form.setValue('originSubdistrictId', '');
+                    setCities([]);
+                    setDistricts([]);
+                    setSubdistricts([]);
+                    if (val) {
+                      const res = await apiClient.get<any>(`/v1/shipping/cities?provinceId=${val}`).catch(() => []);
+                      setCities(Array.isArray(res) ? res : []);
+                    }
+                  }}
+                  className="h-12 px-4 rounded-2xl border-none bg-slate-100 dark:bg-white/5 font-semibold text-sm"
+                >
+                  <option value="">-- Pilih Provinsi --</option>
+                  {provinces.map((p: any) => (
+                    <option key={p.province_id} value={p.province_id}>
+                      {p.province}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={form.watch('originCityId') || ''}
+                  disabled={!form.watch('originProvinceId')}
+                  onChange={async (e) => {
+                    const val = e.target.value;
+                    form.setValue('originCityId', val);
+                    form.setValue('originDistrictId', '');
+                    form.setValue('originSubdistrictId', '');
+                    setDistricts([]);
+                    setSubdistricts([]);
+                    if (val) {
+                      const res = await apiClient.get<any>(`/v1/shipping/districts?cityId=${val}`).catch(() => []);
+                      setDistricts(Array.isArray(res) ? res : []);
+                    }
+                  }}
+                  className="h-12 px-4 rounded-2xl border-none bg-slate-100 dark:bg-white/5 font-semibold text-sm disabled:opacity-50"
+                >
+                  <option value="">-- Pilih Kota / Kabupaten --</option>
+                  {cities.map((c: any) => (
+                    <option key={c.city_id} value={c.city_id}>
+                      {c.type ? `${c.type} ` : ''}{c.city_name}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={form.watch('originDistrictId') || ''}
+                  disabled={!form.watch('originCityId')}
+                  onChange={async (e) => {
+                    const val = e.target.value;
+                    form.setValue('originDistrictId', val);
+                    form.setValue('originSubdistrictId', '');
+                    setSubdistricts([]);
+                    if (val) {
+                      const res = await apiClient.get<any>(`/v1/shipping/subdistricts?districtId=${val}`).catch(() => []);
+                      setSubdistricts(Array.isArray(res) ? res : []);
+                    }
+                  }}
+                  className="h-12 px-4 rounded-2xl border-none bg-slate-100 dark:bg-white/5 font-semibold text-sm disabled:opacity-50"
+                >
+                  <option value="">-- Pilih Kecamatan --</option>
+                  {districts.map((d: any) => (
+                    <option key={d.district_id} value={d.district_id}>
+                      {d.district_name}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={form.watch('originSubdistrictId') || ''}
+                  disabled={!form.watch('originDistrictId')}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    form.setValue('originSubdistrictId', val);
+                    const sub = subdistricts.find((s: any) => String(s.subdistrict_id) === String(val));
+                    const dist = districts.find((d: any) => String(d.district_id) === String(form.getValues('originDistrictId')));
+                    const city = cities.find((c: any) => String(c.city_id) === String(form.getValues('originCityId')));
+                    const prov = provinces.find((p: any) => String(p.province_id) === String(form.getValues('originProvinceId')));
+                    if (sub) {
+                      form.setValue(
+                        'originLocationName',
+                        [sub.subdistrict_name, dist?.district_name, city?.city_name, prov?.province].filter(Boolean).join(', ')
+                      );
+                    }
+                  }}
+                  className="h-12 px-4 rounded-2xl border-none bg-slate-100 dark:bg-white/5 font-semibold text-sm disabled:opacity-50"
+                >
+                  <option value="">-- Pilih Kelurahan / Desa --</option>
+                  {subdistricts.map((s: any) => (
+                    <option key={s.subdistrict_id} value={s.subdistrict_id}>
+                      {s.subdistrict_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {form.watch('originLocationName') && (
+                <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  Lokasi Terpilih: {form.watch('originLocationName')} (ID: {form.watch('originSubdistrictId')})
+                </p>
+              )}
+            </div>
 
             <div className="grid grid-cols-2 gap-4">
               <FormField

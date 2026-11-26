@@ -133,9 +133,7 @@ export default function ProductEditPage({ params }: PageProps) {
                         onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                       />
                     </FormControl>
-                    <FormDescription className="text-[11px] text-slate-400">
-                      ID pengenal utama (Seller SKU) yang menghubungkan produk dengan TikTok Shop.
-                    </FormDescription>
+                  
                     <FormMessage />
                   </FormItem>
                 )}

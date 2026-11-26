@@ -357,6 +357,18 @@ const NAV_GROUPS = [
         icon: Sliders,
         menuKey: 'settings',
       },
+      {
+        name: 'Organization Config',
+        href: '/admin/settings/organization',
+        icon: Building2,
+        menuKey: 'organization',
+      },
+      {
+        name: 'Version Apps',
+        href: '/admin/settings/mobile',
+        icon: Smartphone,
+        menuKey: 'mobile_settings',
+      },
     
     ],
   },

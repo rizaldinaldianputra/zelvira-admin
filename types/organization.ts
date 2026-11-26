@@ -13,6 +13,11 @@ export interface Organization {
   appstoreUrl?: string | null;
   latitude?: number | null;
   longitude?: number | null;
+  originProvinceId?: string | null;
+  originCityId?: string | null;
+  originDistrictId?: string | null;
+  originSubdistrictId?: string | null;
+  originLocationName?: string | null;
   logoUrl?: string | null;
   createdAt?: string;
   updatedAt?: string;
