@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import {
   Building2, MapPin, Phone, Mail, Instagram, Facebook,
   Youtube, Twitter, Play, Apple, Map, Globe, Save, Loader2,
-  Smartphone
+  Smartphone, Search, X
 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -44,10 +44,10 @@ type OrgFormValues = z.infer<typeof orgSchema>;
 export default function OrganizationSettingsPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [provinces, setProvinces] = useState<any[]>([]);
-  const [cities, setCities] = useState<any[]>([]);
-  const [districts, setDistricts] = useState<any[]>([]);
-  const [subdistricts, setSubdistricts] = useState<any[]>([]);
+  const [originSearch, setOriginSearch] = useState('');
+  const [originResults, setOriginResults] = useState<any[]>([]);
+  const [isSearchingOrigin, setIsSearchingOrigin] = useState(false);
+  const [showOriginDropdown, setShowOriginDropdown] = useState(false);
 
   const form = useForm<OrgFormValues>({
     resolver: zodResolver(orgSchema),
@@ -73,19 +73,9 @@ export default function OrganizationSettingsPage() {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        const [data, provRes] = await Promise.all([
-          OrganizationService.get(),
-          apiClient.get<any>('/v1/shipping/provinces').catch(() => []),
-        ]);
-        setProvinces(Array.isArray(provRes) ? provRes : []);
-        if (data.originProvinceId) {
-          apiClient.get<any>(`/v1/shipping/cities?provinceId=${data.originProvinceId}`).then((r) => setCities(Array.isArray(r) ? r : [])).catch(() => {});
-        }
-        if (data.originCityId) {
-          apiClient.get<any>(`/v1/shipping/districts?cityId=${data.originCityId}`).then((r) => setDistricts(Array.isArray(r) ? r : [])).catch(() => {});
-        }
-        if (data.originDistrictId) {
-          apiClient.get<any>(`/v1/shipping/subdistricts?districtId=${data.originDistrictId}`).then((r) => setSubdistricts(Array.isArray(r) ? r : [])).catch(() => {});
+        const data = await OrganizationService.get();
+        if (data.originLocationName) {
+          setOriginSearch(data.originLocationName);
         }
         form.reset({
           ...data,
@@ -175,116 +165,102 @@ export default function OrganizationSettingsPage() {
               )}
             />
 
-            {/* LOKASI ASAL PENGIRIMAN (ORIGIN) */}
-            <div className="space-y-3 pt-2">
+            {/* LOKASI ASAL PENGIRIMAN (ORIGIN) - 1 BARIS SEARCHABLE DROPDOWN */}
+            <div className="space-y-2 pt-2 relative">
               <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">
                 Lokasi Asal Pengiriman (Origin Ongkir)
               </FormLabel>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <select
-                  value={form.watch('originProvinceId') || ''}
-                  onChange={async (e) => {
-                    const val = e.target.value;
-                    form.setValue('originProvinceId', val);
-                    form.setValue('originCityId', '');
-                    form.setValue('originDistrictId', '');
-                    form.setValue('originSubdistrictId', '');
-                    setCities([]);
-                    setDistricts([]);
-                    setSubdistricts([]);
-                    if (val) {
-                      const res = await apiClient.get<any>(`/v1/shipping/cities?provinceId=${val}`).catch(() => []);
-                      setCities(Array.isArray(res) ? res : []);
-                    }
+              <div className="relative">
+                <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Input
+                  value={originSearch}
+                  onFocus={() => {
+                    if (originResults.length > 0) setShowOriginDropdown(true);
                   }}
-                  className="h-12 px-4 rounded-2xl border-none bg-slate-100 dark:bg-white/5 font-semibold text-sm"
-                >
-                  <option value="">-- Pilih Provinsi --</option>
-                  {provinces.map((p: any) => (
-                    <option key={p.province_id} value={p.province_id}>
-                      {p.province}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  value={form.watch('originCityId') || ''}
-                  disabled={!form.watch('originProvinceId')}
-                  onChange={async (e) => {
-                    const val = e.target.value;
-                    form.setValue('originCityId', val);
-                    form.setValue('originDistrictId', '');
-                    form.setValue('originSubdistrictId', '');
-                    setDistricts([]);
-                    setSubdistricts([]);
-                    if (val) {
-                      const res = await apiClient.get<any>(`/v1/shipping/districts?cityId=${val}`).catch(() => []);
-                      setDistricts(Array.isArray(res) ? res : []);
-                    }
-                  }}
-                  className="h-12 px-4 rounded-2xl border-none bg-slate-100 dark:bg-white/5 font-semibold text-sm disabled:opacity-50"
-                >
-                  <option value="">-- Pilih Kota / Kabupaten --</option>
-                  {cities.map((c: any) => (
-                    <option key={c.city_id} value={c.city_id}>
-                      {c.type ? `${c.type} ` : ''}{c.city_name}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  value={form.watch('originDistrictId') || ''}
-                  disabled={!form.watch('originCityId')}
-                  onChange={async (e) => {
-                    const val = e.target.value;
-                    form.setValue('originDistrictId', val);
-                    form.setValue('originSubdistrictId', '');
-                    setSubdistricts([]);
-                    if (val) {
-                      const res = await apiClient.get<any>(`/v1/shipping/subdistricts?districtId=${val}`).catch(() => []);
-                      setSubdistricts(Array.isArray(res) ? res : []);
-                    }
-                  }}
-                  className="h-12 px-4 rounded-2xl border-none bg-slate-100 dark:bg-white/5 font-semibold text-sm disabled:opacity-50"
-                >
-                  <option value="">-- Pilih Kecamatan --</option>
-                  {districts.map((d: any) => (
-                    <option key={d.district_id} value={d.district_id}>
-                      {d.district_name}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  value={form.watch('originSubdistrictId') || ''}
-                  disabled={!form.watch('originDistrictId')}
                   onChange={(e) => {
                     const val = e.target.value;
-                    form.setValue('originSubdistrictId', val);
-                    const sub = subdistricts.find((s: any) => String(s.subdistrict_id) === String(val));
-                    const dist = districts.find((d: any) => String(d.district_id) === String(form.getValues('originDistrictId')));
-                    const city = cities.find((c: any) => String(c.city_id) === String(form.getValues('originCityId')));
-                    const prov = provinces.find((p: any) => String(p.province_id) === String(form.getValues('originProvinceId')));
-                    if (sub) {
-                      form.setValue(
-                        'originLocationName',
-                        [sub.subdistrict_name, dist?.district_name, city?.city_name, prov?.province].filter(Boolean).join(', ')
-                      );
+                    setOriginSearch(val);
+                    setShowOriginDropdown(true);
+                    if (val.trim().length < 3) {
+                      setOriginResults([]);
+                      return;
                     }
+                    setIsSearchingOrigin(true);
+                    apiClient
+                      .get<any>(`/v1/shipping/search/domestic?search=${encodeURIComponent(val.trim())}`)
+                      .then((res) => {
+                        setOriginResults(Array.isArray(res) ? res : []);
+                      })
+                      .catch(() => setOriginResults([]))
+                      .finally(() => setIsSearchingOrigin(false));
                   }}
-                  className="h-12 px-4 rounded-2xl border-none bg-slate-100 dark:bg-white/5 font-semibold text-sm disabled:opacity-50"
-                >
-                  <option value="">-- Pilih Kelurahan / Desa --</option>
-                  {subdistricts.map((s: any) => (
-                    <option key={s.subdistrict_id} value={s.subdistrict_id}>
-                      {s.subdistrict_name}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="Ketik nama kecamatan, kota, atau kelurahan (min. 3 huruf)..."
+                  className="h-12 pl-11 pr-10 rounded-2xl border-none bg-slate-100 dark:bg-white/5 font-semibold text-sm"
+                />
+                {isSearchingOrigin ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-pink-500 absolute right-4 top-1/2 -translate-y-1/2" />
+                ) : originSearch ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOriginSearch('');
+                      setOriginResults([]);
+                      setShowOriginDropdown(false);
+                      form.setValue('originSubdistrictId', '');
+                      form.setValue('originLocationName', '');
+                    }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                ) : null}
+
+                {showOriginDropdown && originSearch.trim().length >= 3 && (
+                  <div className="absolute z-50 mt-2 w-full max-h-64 overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl divide-y divide-slate-100 dark:divide-slate-800">
+                    {isSearchingOrigin ? (
+                      <div className="p-4 text-xs text-slate-500 flex items-center gap-2">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" /> Mencari lokasi...
+                      </div>
+                    ) : originResults.length === 0 ? (
+                      <div className="p-4 text-xs text-slate-500">Lokasi tidak ditemukan.</div>
+                    ) : (
+                      originResults.map((item: any, idx: number) => {
+                        const id = String(item.id ?? item.subdistrict_id ?? '');
+                        const label =
+                          item.label ||
+                          [item.subdistrict_name, item.district_name, item.city_name, item.province_name]
+                            .filter(Boolean)
+                            .join(', ');
+                        return (
+                          <button
+                            key={id || idx}
+                            type="button"
+                            onClick={() => {
+                              form.setValue('originSubdistrictId', id);
+                              form.setValue('originLocationName', label);
+                              setOriginSearch(label);
+                              setShowOriginDropdown(false);
+                            }}
+                            className="w-full text-left px-4 py-3 hover:bg-pink-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-between gap-2"
+                          >
+                            <span className="text-sm font-medium text-slate-800 dark:text-slate-100">{label}</span>
+                            {item.zip_code && (
+                              <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 shrink-0">
+                                {item.zip_code}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                )}
               </div>
-              {form.watch('originLocationName') && (
-                <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                  Lokasi Terpilih: {form.watch('originLocationName')} (ID: {form.watch('originSubdistrictId')})
+
+              {form.watch('originSubdistrictId') && (
+                <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5" />
+                  Origin Aktif: {form.watch('originLocationName')} (ID: {form.watch('originSubdistrictId')})
                 </p>
               )}
             </div>
