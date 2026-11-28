@@ -73,19 +73,20 @@ export default function OrganizationSettingsPage() {
     const loadData = async () => {
       setIsLoading(true);
       try {
+        const extractList = (res: any) => (Array.isArray(res) ? res : Array.isArray(res?.data) ? res.data : []);
         const [data, provRes] = await Promise.all([
           OrganizationService.get(),
           apiClient.get<any>('/v1/shipping/provinces').catch(() => []),
         ]);
-        setProvinces(Array.isArray(provRes) ? provRes : []);
+        setProvinces(extractList(provRes));
         if (data.originProvinceId) {
-          apiClient.get<any>(`/v1/shipping/cities?provinceId=${data.originProvinceId}`).then((r) => setCities(Array.isArray(r) ? r : [])).catch(() => {});
+          apiClient.get<any>(`/v1/shipping/cities?provinceId=${data.originProvinceId}`).then((r) => setCities(extractList(r))).catch(() => {});
         }
         if (data.originCityId) {
-          apiClient.get<any>(`/v1/shipping/districts?cityId=${data.originCityId}`).then((r) => setDistricts(Array.isArray(r) ? r : [])).catch(() => {});
+          apiClient.get<any>(`/v1/shipping/districts?cityId=${data.originCityId}`).then((r) => setDistricts(extractList(r))).catch(() => {});
         }
         if (data.originDistrictId) {
-          apiClient.get<any>(`/v1/shipping/subdistricts?districtId=${data.originDistrictId}`).then((r) => setSubdistricts(Array.isArray(r) ? r : [])).catch(() => {});
+          apiClient.get<any>(`/v1/shipping/subdistricts?districtId=${data.originDistrictId}`).then((r) => setSubdistricts(extractList(r))).catch(() => {});
         }
         form.reset({
           ...data,
@@ -206,7 +207,7 @@ export default function OrganizationSettingsPage() {
                         setSubdistricts([]);
                         if (val) {
                           const res = await apiClient.get<any>(`/v1/shipping/cities?provinceId=${val}`).catch(() => []);
-                          setCities(Array.isArray(res) ? res : []);
+                          setCities(Array.isArray(res) ? res : Array.isArray(res?.data) ? res.data : []);
                         }
                       }}
                       className="w-full h-12 pl-4 pr-10 rounded-2xl border border-slate-200/80 dark:border-slate-700 bg-slate-50 dark:bg-white/5 font-semibold text-sm text-slate-800 dark:text-slate-100 appearance-none focus:outline-none focus:ring-2 focus:ring-pink-500/30 transition-all"
@@ -238,7 +239,7 @@ export default function OrganizationSettingsPage() {
                         setSubdistricts([]);
                         if (val) {
                           const res = await apiClient.get<any>(`/v1/shipping/districts?cityId=${val}`).catch(() => []);
-                          setDistricts(Array.isArray(res) ? res : []);
+                          setDistricts(Array.isArray(res) ? res : Array.isArray(res?.data) ? res.data : []);
                         }
                       }}
                       className="w-full h-12 pl-4 pr-10 rounded-2xl border border-slate-200/80 dark:border-slate-700 bg-slate-50 dark:bg-white/5 font-semibold text-sm text-slate-800 dark:text-slate-100 appearance-none focus:outline-none focus:ring-2 focus:ring-pink-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
@@ -268,7 +269,7 @@ export default function OrganizationSettingsPage() {
                         setSubdistricts([]);
                         if (val) {
                           const res = await apiClient.get<any>(`/v1/shipping/subdistricts?districtId=${val}`).catch(() => []);
-                          setSubdistricts(Array.isArray(res) ? res : []);
+                          setSubdistricts(Array.isArray(res) ? res : Array.isArray(res?.data) ? res.data : []);
                         }
                       }}
                       className="w-full h-12 pl-4 pr-10 rounded-2xl border border-slate-200/80 dark:border-slate-700 bg-slate-50 dark:bg-white/5 font-semibold text-sm text-slate-800 dark:text-slate-100 appearance-none focus:outline-none focus:ring-2 focus:ring-pink-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
